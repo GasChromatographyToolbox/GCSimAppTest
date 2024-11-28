@@ -1,0 +1,20 @@
+<div id="simulation-results" class="col rounded-corners" style="width: 70%"></div>
+    <h2>Simulation Results</h2>
+    <div v-if="run_simulation">
+        <q-spinner color="primary" size="40px" />   
+        Simulation is running...
+    </div>
+    <div v-else>
+        <q-table
+            :data="simulation_results.data"
+            :columns="[
+                { name: 'name', label: 'Name', field: 'name', align: 'left' },
+                { name: 'tR', label: 'Retention Time (min)', field: 'tR', align: 'right' },
+                { name: 'τR', label: 'Peak Width (min)', field: 'τR', align: 'right' }
+            ]"
+            row-key="name"
+            flat
+            bordered
+        />
+    </div>
+</div>
