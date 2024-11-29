@@ -1,24 +1,8 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>Gas Chromatography Simulator</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quasar@1.15.7/dist/quasar.min.css">
-        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/quasar@1.15.7/dist/quasar.umd.min.js"></script>
-    </head>
-    <body>
-        <div id="app">
-            <header>
-                <h1>Gas Chromatography Simulator</h1>
-            </header>
-            <div class="row" style="width: 100%">
-                <% partial("input.jl.html") %>
-                <% partial("results.jl.html") %>
-            </div>
-            <footer>
-                <a href="/">Home</a>
-            </footer>
+<div id="app">
+    <div>
+        <div class="row" style="width: 100%">
+            <% partial("views/input.jl.html") %>
+            <% partial("views/results.jl.html") %>
         </div>
-    </body>
-</html>
+    </div>
+</div>
