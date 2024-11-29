@@ -4,7 +4,7 @@ using GenieFramework
 using DataFrames
 using GasChromatographySimulator
 using Stipple
-using StippleUI.Tables: DataTable
+using StippleUI#.Tables: DataTable
 
 @genietools
 
@@ -47,6 +47,28 @@ Stipple.Layout.add_css("css/my-style.css")
     # reactive handlers watch a variable and execute a block of code when its value changes
     @onchange number_of_heating_rates begin
         @info "number_of_heating_rates changed to $(number_of_heating_rates)"
+        # Ensure arrays have correct length based on number_of_heating_rates
+        current_length = length(temperature_plateaus)
+        target_length = number_of_heating_rates + 1
+
+        if current_length < target_length
+            # Add new elements
+            push!(temperature_plateaus, temperature_plateaus[end]+10.0)
+            push!(temperature_hold_times, temperature_hold_times[end])
+            if length(heating_rates) < number_of_heating_rates
+                push!(heating_rates, heating_rates[end])
+            end
+        elseif current_length > target_length
+            # Remove elements
+            pop!(temperature_plateaus)
+            pop!(temperature_hold_times)
+            if length(heating_rates) > number_of_heating_rates
+                pop!(heating_rates)
+            end
+        end
+        @info "Temperature plateaus: $(temperature_plateaus)"
+        @info "Temperature hold times: $(temperature_hold_times)"
+        @info "Heating rates: $(heating_rates)"
     end
 
     @onbutton run_simulation begin
