@@ -94,7 +94,51 @@
             </tr>
         </table>
         <h3>Temperature</h3>
-        <p>later</p>
+        <p>Number of heating rates:
+            <q-input 
+                v-model.number="number_of_heating_rates"
+                type="number"
+                filled
+                step="1"
+                style="max-width: 200px"
+            />
+        </p>
+        <table>
+            <tr>
+                <th>Temperature (°C)</th>
+                <th>Hold time (min)</th>
+                <th v-if="temperature_plateaus.length - 1 > 1">Heating rate (°C/min)</th>
+            </tr>
+            <tr v-for="(_, index) in temperature_plateaus" :key="index">
+                <td>
+                    <q-input 
+                        v-model.number="temperature_plateaus[index]"
+                        type="number"
+                        filled
+                        step="1"
+                        style="max-width: 200px"
+                    />
+                </td>
+                <td>
+                    <q-input 
+                        v-model.number="temperature_hold_times[index]"
+                        type="number"
+                        filled
+                        step="0.1"
+                        style="max-width: 200px"
+                    />
+                </td>
+                <td v-if="index < temperature_plateaus.length - 1">
+                    <q-input 
+                        v-model.number="heating_rates[index]"
+                        type="number"
+                        filled
+                        step="0.1"
+                        style="max-width: 200px"
+                    />
+                </td>
+            </tr>
+        </table>
         <q-btn 
             v-on:click="run_simulation = true" 
             type="button" 
