@@ -32,6 +32,7 @@ Stipple.Layout.add_css("css/my-style.css")
     @in temperature_hold_times = [1.0, 2.0, 5.0]
     @in heating_rates = [10.0, 20.0]
     @in run_simulation = false
+    @in refresh_ui = false
 
     # result of the simulation
     @out simulation_results = DataTable(DataFrame(
@@ -54,7 +55,7 @@ Stipple.Layout.add_css("css/my-style.css")
         if current_length < target_length
             # Add new elements
             push!(temperature_plateaus, temperature_plateaus[end]+10.0)
-            push!(temperature_hold_times, temperature_hold_times[end])
+            push!(temperature_hold_times, 0.0)
             if length(heating_rates) < number_of_heating_rates
                 push!(heating_rates, heating_rates[end])
             end
@@ -66,9 +67,17 @@ Stipple.Layout.add_css("css/my-style.css")
                 pop!(heating_rates)
             end
         end
+
+        # Force reactive updates by creating new array copies
+        temperature_plateaus = copy(temperature_plateaus)
+        temperature_hold_times = copy(temperature_hold_times)
+        heating_rates = copy(heating_rates)
+
         @info "Temperature plateaus: $(temperature_plateaus)"
         @info "Temperature hold times: $(temperature_hold_times)"
         @info "Heating rates: $(heating_rates)"
+        # Trigger a refresh of the UI
+        refresh_ui = !refresh_ui
     end
 
     @onbutton run_simulation begin
