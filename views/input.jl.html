@@ -94,7 +94,59 @@
             </tr>
         </table>
         <h3>Temperature</h3>
-        <p>later</p>
+        <p>Number of heating rates:
+            <q-input 
+                v-model.number="number_of_heating_rates"
+                type="number"
+                filled
+                step="1"
+                style="max-width: 200px"
+            />
+        </p>
+        <table>
+            <tr>
+                <th>Heating rate (°C/min)</th>
+                <th>Temperature (°C)</th>
+                <th>Hold time (min)</th>
+            </tr>
+            <tr v-for="(_, index) in Array(Number(number_of_heating_rates) + 1)">
+                <td v-if="index > 0">
+                    <q-input 
+                        v-model.number="heating_rates[index - 1]"
+                        type="number"
+                        filled
+                        step="0.1"
+                        style="max-width: 200px"
+                    />
+                </td>
+                <td v-else-if="index == 0">
+                    <q-input 
+                        :disabled="true"
+                        placeholder="--"
+                        filled
+                        style="max-width: 200px"
+                    />
+                </td>
+                <td>
+                    <q-input 
+                        v-model.number="temperature_plateaus[index]"
+                        type="number"
+                        filled
+                        step="1"
+                        style="max-width: 200px"
+                    />
+                </td>
+                <td>
+                    <q-input 
+                        v-model.number="temperature_hold_times[index]"
+                        type="number"
+                        filled
+                        step="0.1"
+                        style="max-width: 200px"
+                    />
+                </td>
+            </tr>
+        </table>
         <q-btn 
             v-on:click="run_simulation = true" 
             type="button" 
