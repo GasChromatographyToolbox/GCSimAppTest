@@ -1,16 +1,32 @@
 <div id="simulation-results" class="col rounded-corners" style="width: 70%">
     <h2>Simulation Results</h2>
     <div v-if="run_simulation">
-        <q-spinner color="primary" size="40px" />   
-        Simulation is running...
+        <div class="simulation-spinner">
+            <q-spinner color="primary" size="40px" />   
+            Simulation is running...
+        </div>
     </div>
     <div v-else>
+        <div id="chromatogram-plot" style="margin-bottom: 20px;">
+            <Plotly
+                :data="[{
+                    x: chromatogram.t,
+                    y: chromatogram.y,
+                    type: 'scatter',
+                    mode: 'lines'
+                }]"
+                :layout="chromatogram_layout"
+            />
+        </div>
         <q-table
+            title="Peak List"
             :data="simulation_results.data"
             :columns="[
                 { name: 'name', label: 'Name', field: 'name', align: 'left' },
                 { name: 'tR', label: 'Retention Time (min)', field: 'tR', align: 'right' },
-                { name: 'τR', label: 'Peak Width (min)', field: 'τR', align: 'right' }
+                { name: 'τR', label: 'Peak Width (min)', field: 'τR', align: 'right' },
+                { name: 'Telu', label: 'Elution Temperature (°C)', field: 'Telu', align: 'right'},
+                { name: 'Res', label: 'Resolution', field: 'Res', align: 'right'}
             ]"
             row-key="name"
             flat
