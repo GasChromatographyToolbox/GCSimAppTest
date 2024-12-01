@@ -5,6 +5,7 @@ using DataFrames
 using GasChromatographySimulator
 using Stipple
 using StippleUI#.Tables: DataTable
+using PlotlyBase
 
 @genietools
 
@@ -38,11 +39,15 @@ Stipple.Layout.add_css("css/my-style.css")
     @out simulation_results = DataTable(DataFrame(
         name = String[], 
         tR = Float64[], 
-        τR = Float64[]
+        τR = Float64[],
+        Telu = Float64[],
+        Res = Float64[]
     ))
-    #@out result_names = ["sub1", "sub2", "sub3"]
-    #@out result_tR = [1.0, 2.0, 3.0]
-    #@out result_τR = [0.1, 0.2, 0.3]
+    @out chromatogram = DataFrame(
+        t = Float64[],
+        y = Float64[]
+    )
+    @out chromatogram_layout = PlotlyBase.Layout(title="Chromatogram", xlabel="Time (min)")
 
     # == REACTIVE HANDLERS ==
     # reactive handlers watch a variable and execute a block of code when its value changes
@@ -83,7 +88,16 @@ Stipple.Layout.add_css("css/my-style.css")
     @onbutton run_simulation begin
         @info "Running simulation"
         # TODO: run the simulation
-        simulation_results = GC_simulation(column_length, column_diameter, film_thickness, stationary_phase, gas, flow_rate, outlet_pressure, temperature_plateaus, temperature_hold_times, heating_rates)
+        results_df, chrom_df = GC_simulation(column_length, column_diameter, film_thickness, stationary_phase, gas, flow_rate, outlet_pressure, temperature_plateaus, temperature_hold_times, heating_rates)
+
+        # Update the DataTables data property
+        simulation_results.data = results_df
+
+        #Update the chromatogram data 
+        chromatogram = chrom_df
+        # Log the final state
+        @info "simulation_results updated:" simulation_results
+        @info "chromatogram updated:" chromatogram
     end
 end
 
@@ -151,19 +165,24 @@ function GC_simulation(column_length,
     @info "Converted parameters:" parameters
     # Run the simulation 
     sim = GasChromatographySimulator.simulate(parameters)[1]
-    df = DataFrame(
+    simulation_results = DataFrame(
         name = sim.Name, 
         tR = sim.tR./60.0, 
-        τR = sim.τR./60.0
+        τR = sim.τR./60.0,
+        Telu = sim.TR,
+        Res = sim.Res
     )
 
-    simulation_results = DataTable(df)
-    @info "Simulation results:" df
+    # chromatogram
+    tEnd = sum(time_steps)/60.0
+    t = 0.0:tEnd/1000:tEnd
+    y = GasChromatographySimulator.chromatogram(t, simulation_results.tR, simulation_results.τR)
+    chromatogram = DataFrame(
+        t = t,
+        y = y
+    )
 
-    return simulation_results
-
-    # placeholder simulation
-    #return ["sub1", "sub2", "sub3"], [1.2, 2.4, 3.6], [0.2, 0.4, 0.6]
+    return simulation_results, chromatogram 
 end
 
 # == Pages ==
