@@ -5,6 +5,13 @@
     margin: 10px;
 }
 
+.simulation-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px; 
+    gap: 10px;
+}
 
 /* ========================================
     Custom Media Queries
