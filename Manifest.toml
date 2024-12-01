@@ -2,7 +2,7 @@
 
 julia_version = "1.10.4"
 manifest_format = "2.0"
-project_hash = "ed989a0b3cfedd2c5cf5004c89934c215f51f037"
+project_hash = "9aff3b4cdeed23308fa7a9dd44c76c4bbf35264c"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "72af59f5b8f09faee36b4ec48e014a79210f2f4f"
@@ -1909,6 +1909,12 @@ git-tree-sha1 = "3ca9a356cd2e113c420f2c13bea19f8d3fb1cb18"
 uuid = "995b91a9-d308-5afd-9ec6-746e21dbc043"
 version = "1.4.3"
 
+[[deps.PlotlyBase]]
+deps = ["ColorSchemes", "Dates", "DelimitedFiles", "DocStringExtensions", "JSON", "LaTeXStrings", "Logging", "Parameters", "Pkg", "REPL", "Requires", "Statistics", "UUIDs"]
+git-tree-sha1 = "56baf69781fc5e61607c3e46227ab17f7040ffa2"
+uuid = "a03496cd-edff-5a9b-9e67-9cda94a718b5"
+version = "0.8.19"
+
 [[deps.Plots]]
 deps = ["Base64", "Contour", "Dates", "Downloads", "FFMPEG", "FixedPointNumbers", "GR", "JLFzf", "JSON", "LaTeXStrings", "Latexify", "LinearAlgebra", "Measures", "NaNMath", "Pkg", "PlotThemes", "PlotUtils", "PrecompileTools", "Printf", "REPL", "Random", "RecipesBase", "RecipesPipeline", "Reexport", "RelocatableFolders", "Requires", "Scratch", "Showoff", "SparseArrays", "Statistics", "StatsBase", "TOML", "UUIDs", "UnicodeFun", "UnitfulLatexify", "Unzip"]
 git-tree-sha1 = "dae01f8c2e069a683d3a6e17bbae5070ab94786f"
@@ -2427,12 +2433,10 @@ deps = ["DataFrames", "Genie", "Requires", "Stipple"]
 git-tree-sha1 = "05cc51d2268f430b0f8dada1ccc330d1a9d20c3f"
 uuid = "ec984513-233d-481d-95b0-a3b58b97af2b"
 version = "0.13.16"
+weakdeps = ["PlotlyBase"]
 
     [deps.StipplePlotly.extensions]
     StipplePlotlyPlotlyBaseExt = "PlotlyBase"
-
-    [deps.StipplePlotly.weakdeps]
-    PlotlyBase = "a03496cd-edff-5a9b-9e67-9cda94a718b5"
 
 [[deps.StippleTable]]
 deps = ["Stipple", "StippleUI"]
