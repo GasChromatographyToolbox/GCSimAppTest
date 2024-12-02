@@ -36,18 +36,31 @@ Stipple.Layout.add_css("css/my-style.css")
     @in refresh_ui = false
 
     # result of the simulation
-    @out simulation_results = DataTable(DataFrame(
-        name = String[], 
-        tR = Float64[], 
-        τR = Float64[],
-        Telu = Float64[],
-        Res = Float64[]
-    ))
+    data_table_options = DataTableOptions(
+        columns = [
+        Column("name", label="Name", align=:left, sortable=false),
+        Column("tR", label="Retention Time (min)", align=:right, sortable=false),
+        Column("τR", label="Peak Width (min)", align=:right, sortable=false),
+        Column("Telu", label="Elution Temperature (°C)", align=:right, sortable=false),
+        Column("Res", label="Resolution", align=:right, sortable=false)
+        ]
+    )
+    @out simulation_results = DataTable(
+        DataFrame(
+            name = String[], 
+            tR = Float64[], 
+            τR = Float64[],
+            Telu = Float64[],
+            Res = Float64[]
+        ),
+        data_table_options
+    )
+
     @out chromatogram = DataFrame(
         t = Float64[],
         y = Float64[]
     )
-    @out chromatogram_layout = PlotlyBase.Layout(title="Chromatogram", xlabel="Time (min)")
+    @out chromatogram_layout = PlotlyBase.Layout(xaxis = Dict(:title => "Time (min)"))
 
     # == REACTIVE HANDLERS ==
     # reactive handlers watch a variable and execute a block of code when its value changes
@@ -74,9 +87,12 @@ Stipple.Layout.add_css("css/my-style.css")
         end
 
         # Force reactive updates by creating new array copies
-        temperature_plateaus = copy(temperature_plateaus)
-        temperature_hold_times = copy(temperature_hold_times)
-        heating_rates = copy(heating_rates)
+        #temperature_plateaus = copy(temperature_plateaus)
+        #temperature_hold_times = copy(temperature_hold_times)
+        #heating_rates = copy(heating_rates)
+        @push temperature_plateaus
+        @push temperature_hold_times
+        @push heating_rates
 
         @info "Temperature plateaus: $(temperature_plateaus)"
         @info "Temperature hold times: $(temperature_hold_times)"
@@ -87,16 +103,20 @@ Stipple.Layout.add_css("css/my-style.css")
 
     @onbutton run_simulation begin
         @info "Running simulation"
-        # TODO: run the simulation
+
         results_df, chrom_df = GC_simulation(column_length, column_diameter, film_thickness, stationary_phase, gas, flow_rate, outlet_pressure, temperature_plateaus, temperature_hold_times, heating_rates)
 
         # Update the DataTables data property
-        simulation_results.data = results_df
+        simulation_results = DataTable(results_df, data_table_options)
+        @push simulation_results
 
         #Update the chromatogram data 
         chromatogram = chrom_df
+        @push chromatogram
+
         # Log the final state
         @info "simulation_results updated:" simulation_results
+        @info "simulation_data updated:" simulation_data
         @info "chromatogram updated:" chromatogram
     end
 end
@@ -167,10 +187,11 @@ function GC_simulation(column_length,
     sim = GasChromatographySimulator.simulate(parameters)[1]
     simulation_results = DataFrame(
         name = sim.Name, 
-        tR = sim.tR./60.0, 
-        τR = sim.τR./60.0,
-        Telu = sim.TR,
-        Res = sim.Res
+        tR = replace(round.(sim.tR./60.0, digits=3), NaN => "--"), 
+        τR = replace(round.(sim.τR./60.0, digits=3), NaN => "--"),
+        Telu = replace(round.(sim.TR, digits=2), NaN => "--"),
+        Res = replace(round.(sim.Res, digits=3), NaN => "--")
+        # NaN values seem to cause issues with the DataTable/Vue.js
     )
 
     # chromatogram
