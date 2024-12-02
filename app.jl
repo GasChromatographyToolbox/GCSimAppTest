@@ -5,6 +5,7 @@ using DataFrames
 using GasChromatographySimulator
 using Stipple
 using StippleUI#.Tables: DataTable
+using PlotlyBase
 
 @genietools
 
@@ -35,14 +36,31 @@ Stipple.Layout.add_css("css/my-style.css")
     @in refresh_ui = false
 
     # result of the simulation
-    @out simulation_results = DataTable(DataFrame(
-        name = String[], 
-        tR = Float64[], 
-        τR = Float64[]
-    ))
-    #@out result_names = ["sub1", "sub2", "sub3"]
-    #@out result_tR = [1.0, 2.0, 3.0]
-    #@out result_τR = [0.1, 0.2, 0.3]
+    data_table_options = DataTableOptions(
+        columns = [
+        Column("name", label="Name", align=:left, sortable=false),
+        Column("tR", label="Retention Time (min)", align=:right, sortable=false),
+        Column("τR", label="Peak Width (min)", align=:right, sortable=false),
+        Column("Telu", label="Elution Temperature (°C)", align=:right, sortable=false),
+        Column("Res", label="Resolution", align=:right, sortable=false)
+        ]
+    )
+    @out simulation_results = DataTable(
+        DataFrame(
+            name = String[], 
+            tR = Float64[], 
+            τR = Float64[],
+            Telu = Float64[],
+            Res = Float64[]
+        ),
+        data_table_options
+    )
+
+    @out chromatogram = DataFrame(
+        t = Float64[],
+        y = Float64[]
+    )
+    @out chromatogram_layout = PlotlyBase.Layout(xaxis = Dict(:title => "Time (min)"))
 
     # == REACTIVE HANDLERS ==
     # reactive handlers watch a variable and execute a block of code when its value changes
@@ -69,9 +87,12 @@ Stipple.Layout.add_css("css/my-style.css")
         end
 
         # Force reactive updates by creating new array copies
-        temperature_plateaus = copy(temperature_plateaus)
-        temperature_hold_times = copy(temperature_hold_times)
-        heating_rates = copy(heating_rates)
+        #temperature_plateaus = copy(temperature_plateaus)
+        #temperature_hold_times = copy(temperature_hold_times)
+        #heating_rates = copy(heating_rates)
+        @push temperature_plateaus
+        @push temperature_hold_times
+        @push heating_rates
 
         @info "Temperature plateaus: $(temperature_plateaus)"
         @info "Temperature hold times: $(temperature_hold_times)"
@@ -82,8 +103,21 @@ Stipple.Layout.add_css("css/my-style.css")
 
     @onbutton run_simulation begin
         @info "Running simulation"
-        # TODO: run the simulation
-        simulation_results = GC_simulation(column_length, column_diameter, film_thickness, stationary_phase, gas, flow_rate, outlet_pressure, temperature_plateaus, temperature_hold_times, heating_rates)
+
+        results_df, chrom_df = GC_simulation(column_length, column_diameter, film_thickness, stationary_phase, gas, flow_rate, outlet_pressure, temperature_plateaus, temperature_hold_times, heating_rates)
+
+        # Update the DataTables data property
+        simulation_results = DataTable(results_df, data_table_options)
+        @push simulation_results
+
+        #Update the chromatogram data 
+        chromatogram = chrom_df
+        @push chromatogram
+
+        # Log the final state
+        @info "simulation_results updated:" simulation_results
+        @info "simulation_data updated:" simulation_data
+        @info "chromatogram updated:" chromatogram
     end
 end
 
@@ -151,19 +185,25 @@ function GC_simulation(column_length,
     @info "Converted parameters:" parameters
     # Run the simulation 
     sim = GasChromatographySimulator.simulate(parameters)[1]
-    df = DataFrame(
+    simulation_results = DataFrame(
         name = sim.Name, 
-        tR = sim.tR./60.0, 
-        τR = sim.τR./60.0
+        tR = replace(round.(sim.tR./60.0, digits=3), NaN => "--"), 
+        τR = replace(round.(sim.τR./60.0, digits=3), NaN => "--"),
+        Telu = replace(round.(sim.TR, digits=2), NaN => "--"),
+        Res = replace(round.(sim.Res, digits=3), NaN => "--")
+        # NaN values seem to cause issues with the DataTable/Vue.js
     )
 
-    simulation_results = DataTable(df)
-    @info "Simulation results:" df
+    # chromatogram
+    tEnd = sum(time_steps)/60.0
+    t = 0.0:tEnd/1000:tEnd
+    y = GasChromatographySimulator.chromatogram(t, simulation_results.tR, simulation_results.τR)
+    chromatogram = DataFrame(
+        t = t,
+        y = y
+    )
 
-    return simulation_results
-
-    # placeholder simulation
-    #return ["sub1", "sub2", "sub3"], [1.2, 2.4, 3.6], [0.2, 0.4, 0.6]
+    return simulation_results, chromatogram 
 end
 
 # == Pages ==

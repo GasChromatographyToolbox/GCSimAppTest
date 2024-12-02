@@ -2,5 +2,6 @@
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 GasChromatographySimulator = "dd82b6e2-56ef-419d-b271-0be268cb65f5"
 GenieFramework = "a59fdf5c-6bf0-4f5d-949c-a137c9e2f353"
+PlotlyBase = "a03496cd-edff-5a9b-9e67-9cda94a718b5"
 Stipple = "4acbeb90-81a0-11ea-1966-bdaff8155998"
 StippleUI = "a3c5d34a-b254-4859-a8fa-b86abb7e84a3"

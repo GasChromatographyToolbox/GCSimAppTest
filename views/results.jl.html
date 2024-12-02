@@ -1,20 +1,39 @@
-<div id="simulation-results" class="col rounded-corners" style="width: 70%">
-    <h2>Simulation Results</h2>
-    <div v-if="run_simulation">
-        <q-spinner color="primary" size="40px" />   
-        Simulation is running...
-    </div>
-    <div v-else>
-        <q-table
-            :data="simulation_results.data"
-            :columns="[
-                { name: 'name', label: 'Name', field: 'name', align: 'left' },
-                { name: 'tR', label: 'Retention Time (min)', field: 'tR', align: 'right' },
-                { name: 'τR', label: 'Peak Width (min)', field: 'τR', align: 'right' }
-            ]"
-            row-key="name"
-            flat
-            bordered
-        />
+<div id="simulation-results" class="col rounded-corners" style="height: 90vh;">
+    <div class="q-gutter-md h-100 d-flex flex-column">
+        <h2>Simulation Results</h2>
+        <div class="flex-grow">
+            <div v-if="run_simulation">
+                <div class="simulation-spinner">
+                    <q-spinner color="primary" size="40px" />   
+                    Simulation is running...
+                </div>
+            </div>
+            <div v-else class="d-flex flex-column h-100">
+                <div id="chromatogram-plot" style="height: 60%;">
+                    <h3>Chromatogram</h3>
+                    <Plotly
+                        :data="[{
+                            x: chromatogram.t,
+                            y: chromatogram.y,
+                            type: 'scatter',
+                            mode: 'lines'
+                        }]"
+                        :layout="chromatogram_layout"
+                        style="width: 100%; height: 100%;"
+                    />
+                </div>
+                <hr style="margin: 0; width: 100%;">
+                <div style="flex: 0 0 40%; overflow-y: auto;">
+                    <h3>Peak List</h3>
+                    <q-table
+                        :data="simulation_results.data"
+                        :columns="simulation_results.columns"
+                        row-key="name"
+                        flat
+                        bordered
+                    />
+                </div>
+            </div>
+        </div>
     </div>
 </div>
