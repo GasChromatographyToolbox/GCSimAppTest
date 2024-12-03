@@ -2,6 +2,7 @@ module App
 
 using GenieFramework
 using DataFrames
+using CSV
 using GasChromatographySimulator
 using Stipple
 using StippleUI#.Tables: DataTable
@@ -10,8 +11,17 @@ using PlotlyBase
 @genietools
 
 Stipple.Layout.add_css("css/my-style.css")
+
+
+
 # Reactive code
 @app begin
+
+    # Load the retention database
+    retention_database = DataFrame(CSV.File("public/data/Database.csv", header=1, silencewarnings=true, stringtype=String))
+    substance_names = GasChromatographySimulator.all_solutes("Wax", retention_database)
+    phases = unique(retention_database.Phase)
+
 # == REACTIVE VARIABLES ==
     # @out variables can only be modified by the backend
     # @in variables can be modified by both the backend and the browser
@@ -21,8 +31,8 @@ Stipple.Layout.add_css("css/my-style.css")
     @in column_length = 30.0
     @in column_diameter = 0.25
     @in film_thickness = 0.25
-    @in stationary_phase = "DB5"
-    @in stationary_phase_options = ["DB5", "Wax", "SPB50"]
+    @in stationary_phase = phases[1]
+    @in stationary_phase_options = phases
     @in gas = "He"
     @in gas_options = ["H2", "He", "N2"]
     @in flow_rate = 1.0
@@ -40,10 +50,16 @@ Stipple.Layout.add_css("css/my-style.css")
         columns = [
         Column("name", label="Name", align=:left, sortable=false),
         Column("tR", label="Retention Time (min)", align=:right, sortable=false),
-        Column("τR", label="Peak Width (min)", align=:right, sortable=false),
+        Column("τR", label="Peak Width (s)", align=:right, sortable=false),
         Column("Telu", label="Elution Temperature (°C)", align=:right, sortable=false),
         Column("Res", label="Resolution", align=:right, sortable=false)
         ]
+    )
+    pagination = DataTablePagination(
+        rows_per_page = 17,  # 0 means show all rows
+        page = 1,
+        sort_by = :tR,
+        descending = false
     )
     @out simulation_results = DataTable(
         DataFrame(
@@ -53,7 +69,8 @@ Stipple.Layout.add_css("css/my-style.css")
             Telu = Float64[],
             Res = Float64[]
         ),
-        data_table_options
+        data_table_options,
+        pagination
     )
 
     @out chromatogram = DataFrame(
@@ -104,10 +121,10 @@ Stipple.Layout.add_css("css/my-style.css")
     @onbutton run_simulation begin
         @info "Running simulation"
 
-        results_df, chrom_df = GC_simulation(column_length, column_diameter, film_thickness, stationary_phase, gas, flow_rate, outlet_pressure, temperature_plateaus, temperature_hold_times, heating_rates)
+        results_df, chrom_df = GC_simulation(column_length, column_diameter, film_thickness, stationary_phase, gas, flow_rate, outlet_pressure, temperature_plateaus, temperature_hold_times, heating_rates, retention_database, substance_names)
 
         # Update the DataTables data property
-        simulation_results = DataTable(results_df, data_table_options)
+        simulation_results = DataTable(results_df, data_table_options, pagination)
         @push simulation_results
 
         #Update the chromatogram data 
@@ -143,7 +160,9 @@ function GC_simulation(column_length,
                         outlet_pressure, 
                         temperature_plateaus, 
                         temperature_hold_times, 
-                        heating_rates)
+                        heating_rates,
+                        database,
+                        substance_names)
 
     L = column_length
     d = column_diameter
@@ -155,8 +174,10 @@ function GC_simulation(column_length,
 
     # column settings
     column = GasChromatographySimulator.Column(L, d*1e-3, df*1e-6, stationary_phase, gas)
+    @info "Column settings:" column
     # program settings
     time_steps, temperature_steps = temperature_program(T_plateaus, T_hold_times, rT)
+    @info "Program settings:" time_steps, temperature_steps
     if outlet_pressure == "atmospheric"
         p_out = 101300.0
     elseif outlet_pressure == "vacuum"
@@ -166,21 +187,24 @@ function GC_simulation(column_length,
     end
     program = GasChromatographySimulator.Program(time_steps, temperature_steps, fill(F, length(time_steps))./(60e6), fill(p_out, length(time_steps)), L)
     
-    # sunstances
+    # substances
     # placeholder for now
     # TODO: load real data
-    substances = [
-        GasChromatographySimulator.Substance("sub1", "0-0-1", 273.15+40.0, 30.0, 80.0, 1e-3, "test", 1e-8, 0.0, 0.0),
-        GasChromatographySimulator.Substance("sub2", "0-0-2", 273.15+50.0, 33.0, 100.0, 1e-3, "test", 1e-8, 0.0, 0.0),
-        GasChromatographySimulator.Substance("sub3", "0-0-3", 273.15+60.0, 27.0, 90.0, 1e-3, "test", 1e-8, 0.0, 0.0)
-    ]
+    #substances = [
+    #    GasChromatographySimulator.Substance("sub1", "0-0-1", 273.15+40.0, 30.0, 80.0, 1e-3, "test", 1e-8, 0.0, 0.0),
+    #    GasChromatographySimulator.Substance("sub2", "0-0-2", 273.15+50.0, 33.0, 100.0, 1e-3, "test", 1e-8, 0.0, 0.0),
+    #    GasChromatographySimulator.Substance("sub3", "0-0-3", 273.15+60.0, 27.0, 90.0, 1e-3, "test", 1e-8, 0.0, 0.0)
+    #]
+
+    substances = GasChromatographySimulator.load_solute_database(database, column.sp, column.gas, substance_names, zeros(length(substance_names)), zeros(length(substance_names)))
+    @info "Substances:" substances
 
     # options
     options = GasChromatographySimulator.Options(
         ng=false, 
         control="Flow"
     )
-
+    @info "Options:" options
     parameters = GasChromatographySimulator.Parameters(column, program, substances, options)
     @info "Converted parameters:" parameters
     # Run the simulation 
@@ -188,7 +212,7 @@ function GC_simulation(column_length,
     simulation_results = DataFrame(
         name = sim.Name, 
         tR = replace(round.(sim.tR./60.0, digits=3), NaN => "--"), 
-        τR = replace(round.(sim.τR./60.0, digits=3), NaN => "--"),
+        τR = replace(round.(sim.τR, digits=2), NaN => "--"),
         Telu = replace(round.(sim.TR, digits=2), NaN => "--"),
         Res = replace(round.(sim.Res, digits=3), NaN => "--")
         # NaN values seem to cause issues with the DataTable/Vue.js
@@ -197,7 +221,7 @@ function GC_simulation(column_length,
     # chromatogram
     tEnd = sum(time_steps)/60.0
     t = 0.0:tEnd/1000:tEnd
-    y = GasChromatographySimulator.chromatogram(t, simulation_results.tR, simulation_results.τR)
+    y = GasChromatographySimulator.chromatogram(t, simulation_results.tR, simulation_results.τR./60.0)
     chromatogram = DataFrame(
         t = t,
         y = y
