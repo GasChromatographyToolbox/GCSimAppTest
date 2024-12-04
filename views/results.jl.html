@@ -1,6 +1,6 @@
 <div id="simulation-results" class="col rounded-corners" style="height: 90vh;">
-    <div class="q-gutter-md h-100 d-flex flex-column">
-        <h2>Simulation Results</h2>
+    <div class="h-100 d-flex flex-column">
+        <h2 class="section-title">Simulation Results</h2>
         <div class="flex-grow">
             <div v-if="run_simulation">
                 <div class="simulation-spinner">
@@ -9,29 +9,54 @@
                 </div>
             </div>
             <div v-else class="d-flex flex-column h-100">
-                <div id="chromatogram-plot" style="height: 60%;">
+                <div id="chromatogram-plot" style="height: 50%;">
                     <h3>Chromatogram</h3>
-                    <Plotly
-                        :data="[{
-                            x: chromatogram.t,
-                            y: chromatogram.y,
-                            type: 'scatter',
-                            mode: 'lines'
-                        }]"
-                        :layout="chromatogram_layout"
-                        style="width: 100%; height: 100%;"
-                    />
+                    <div style="height: calc(100% - 40px);">
+                        <Plotly
+                            :data="[{
+                                x: chromatogram.t,
+                                y: chromatogram.y,
+                                type: 'scatter',
+                                mode: 'lines'
+                            }]"
+                            :layout="{
+                                xaxis: {
+                                    title: 'Time (min)',
+                                    showgrid: true
+                                },
+                                yaxis: {
+                                    showticklabels: false,
+                                    showgrid: true
+                                },
+                                margin: {
+                                    l: 30,  // left margin
+                                    r: 10,  // right margin
+                                    t: 10,  // top margin
+                                    b: 30   // bottom margin
+                                }
+                            }"
+                            style="width: 100%; height: 100%;"
+                        />
+                    </div>
                 </div>
                 <hr style="margin: 0; width: 100%;">
-                <div style="flex: 0 0 40%; overflow-y: auto;">
+                <div id="peak-list">
                     <h3>Peak List</h3>
-                    <q-table
-                        :data="simulation_results.data"
-                        :columns="simulation_results.columns"
-                        row-key="name"
-                        flat
-                        bordered
-                    />
+                    <div class="scrollbar" style="height: calc(85% - 40px);">
+                        <q-table
+                            :data="simulation_results.data"
+                            :columns="simulation_results.columns"
+                            row-key="name"
+                            class="sticky-header-table"
+                            flat
+                            bordered
+                            virtual-scroll
+                            v-model:pagination="pagination"
+                            :rows-per-page-options="[0]"  
+                            style="max-height: 100%;"
+                            hide-bottom
+                        />
+                    </div>
                 </div>
             </div>
         </div>
