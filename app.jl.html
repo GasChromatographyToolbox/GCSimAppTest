@@ -1,6 +1,9 @@
-<div id="app">
-    <div>
-        <div class="row" style="width: 100%">
+<div id="app" style="height: 100vh; display: flex; flex-direction: column;">
+
+    <% partial("views/header.jl.html") %>
+    
+    <div style="flex: 1; overflow: hidden;">
+        <div class="row" style="width: 100%; height: 90vh;">
             <% partial("views/input.jl.html") %>
             <% partial("views/results.jl.html") %>
         </div>

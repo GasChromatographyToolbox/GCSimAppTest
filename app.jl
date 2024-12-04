@@ -10,7 +10,7 @@ using PlotlyBase
 
 @genietools
 
-Stipple.Layout.add_css("css/my-style.css")
+#Stipple.Layout.add_css("css/my-style.css")
 
 
 
@@ -77,7 +77,11 @@ Stipple.Layout.add_css("css/my-style.css")
         t = Float64[],
         y = Float64[]
     )
-    @out chromatogram_layout = PlotlyBase.Layout(xaxis = Dict(:title => "Time (min)"))
+    #@out chromatogram_layout = PlotlyBase.Layout(
+    #    title = "Chromatogram-test",
+    #    xaxis = attr(title = "Time (min)"),
+    #    yaxis = attr(showticklabels = false)
+    #)
 
     # == REACTIVE HANDLERS ==
     # reactive handlers watch a variable and execute a block of code when its value changes
@@ -220,7 +224,7 @@ function GC_simulation(column_length,
 
     # chromatogram
     tEnd = sum(time_steps)/60.0
-    t = 0.0:tEnd/1000:tEnd
+    t = 0.0:tEnd/10000:tEnd
     y = GasChromatographySimulator.chromatogram(t, simulation_results.tR, simulation_results.τR./60.0)
     chromatogram = DataFrame(
         t = t,
