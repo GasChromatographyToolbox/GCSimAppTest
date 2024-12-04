@@ -1,26 +1,25 @@
 <div id="simulation-input-form" class="col-3 rounded-corners" style="height: 90vh;">
     <q-form
       @submit="onSubmit"
-      class="q-gutter-md h-100 d-flex flex-column"
+      class="h-100 d-flex flex-column"
     >
-        <h2>Simulation Input</h2>
+        <h2 class="section-title">Simulation Input</h2>
         <div class="scrollbar">
             <h3>Column</h3>
-            <table>
-                <tr>
-                    <th>name</th>
-                    <th>value</th>
-                    <th>unit</th>
-                </tr>
+            <table class="input-table">
                 <tr>
                     <td>Stationary phase</td>
                     <td>
-                        <q-select v-model="stationary_phase" :options="stationary_phase_options" />
+                        <q-select 
+                            v-model="stationary_phase" 
+                            :options="stationary_phase_options"
+                            filled
+                            style="max-width: 200px"
+                        />
                     </td>
-                    <td></td>
                 </tr>
                 <tr>
-                    <td>Column length</td>
+                    <td>Column length (m)</td>
                     <td>
                         <q-input 
                             v-model.number="column_length"
@@ -30,10 +29,9 @@
                             style="max-width: 200px"
                         />
                     </td>
-                    <td>m</td>
                 </tr>
                 <tr>
-                    <td>Column diameter</td>
+                    <td>Column diameter (mm)</td>
                     <td>
                         <q-input 
                             v-model.number="column_diameter"
@@ -43,10 +41,9 @@
                             style="max-width: 200px"
                         />
                     </td>
-                    <td>mm</td>
                 </tr>
                 <tr></tr>
-                    <td>Film thickness</td>
+                    <td>Film thickness (µm)</td>
                     <td>
                         <q-input 
                             v-model.number="film_thickness"
@@ -56,19 +53,13 @@
                             style="max-width: 200px"
                         />
                     </td>
-                    <td>µm</td>
                 </tr>
             </table>
             <hr>
             <h3>Flow</h3>
-            <table>
+            <table class="input-table">
                 <tr>
-                    <th>name</th>
-                    <th>value</th>
-                    <th>unit</th>
-                </tr>
-                <tr>
-                    <td>Flow rate</td>
+                    <td>Flow rate (mL/min)</td>
                     <td>
                         <q-input 
                             v-model.number="flow_rate"
@@ -78,34 +69,48 @@
                             style="max-width: 200px"
                         />
                     </td>
-                    <td>mL/min</td>
                 </tr>
                 <tr>
                     <td>Outlet pressure</td>
                     <td>
-                        <q-select v-model="outlet_pressure" :options="outlet_pressure_options" />
+                        <q-select 
+                            v-model="outlet_pressure" 
+                            :options="outlet_pressure_options"
+                            filled
+                            style="max-width: 200px"
+                        />
                     </td>
-                    <td></td>
                 </tr>
                 <tr>
                     <td>Gas</td>
                     <td>
-                        <q-select v-model="gas" :options="gas_options" />
+                        <q-select 
+                            v-model="gas" 
+                            :options="gas_options"
+                            filled
+                            style="max-width: 200px"
+                        />
                     </td>
-                    <td></td>
                 </tr>
             </table>
             <hr>
             <h3>Temperature</h3>
-            <p>Number of heating rates:
-                <q-input 
-                    v-model.number="number_of_heating_rates"
-                    type="number"
-                    filled
-                    step="1"
-                    style="max-width: 200px"
-                />
-            </p>
+            <table>
+                <tr>
+                    <td class="text-bold">
+                        Number of heating rates:
+                    </td>
+                    <td>
+                        <q-input 
+                            v-model.number="number_of_heating_rates"
+                            type="number"
+                            filled
+                            step="1"
+                            style="max-width: 70px"
+                        />
+                    </td>
+                </tr>
+            </table>
             <table>
                 <tr>
                     <th>Heating rate (°C/min)</th>
@@ -123,12 +128,7 @@
                         />
                     </td>
                     <td v-else-if="index == 0">
-                        <q-input 
-                            :disabled="true"
-                            placeholder="--"
-                            filled
-                            style="max-width: 200px"
-                        />
+                        
                     </td>
                     <td>
                         <q-input 
@@ -154,8 +154,8 @@
         <q-btn 
             v-on:click="run_simulation = true" 
             type="button" 
-            style="background: goldenrod; color: white" 
-            label="Run Simulation" 
+            label="Run Simulation"
+            id="run-simulation-button"
         />    
     </q-form>
 </div>
