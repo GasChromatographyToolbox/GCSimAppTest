@@ -10,9 +10,26 @@ using PlotlyBase
 
 @genietools
 
-#Stipple.Layout.add_css("css/my-style.css")
+# custom javascript:
+# set the browser title of the page based on the route
+title_module() = [
+    script("""
+        document.addEventListener("DOMContentLoaded", function() {
+            const titles = {
+                '/': 'GasChromatographyToolbox',
+                '/gcsim': 'GC Simulation - GasChromatographyToolbox',
+                '/about': 'About Me - GasChromatographyToolbox'
+            };
+            const currentPath = window.location.pathname;
+            console.log("Current path:", currentPath);
+            console.log("Setting document title");
+            document.title = titles[currentPath] || 'GasChromatographyToolbox';
+            console.log("title:", document.title);
+        });
+    """)
+]
 
-
+@deps title_module
 
 # Reactive code
 @app begin
@@ -82,6 +99,9 @@ using PlotlyBase
     #    xaxis = attr(title = "Time (min)"),
     #    yaxis = attr(showticklabels = false)
     #)
+
+    # misc variables
+    @out title = "GasChromatographyToolbox"
 
     # == REACTIVE HANDLERS ==
     # reactive handlers watch a variable and execute a block of code when its value changes
@@ -236,5 +256,7 @@ end
 
 # == Pages ==
 # register a new route and the page that will be loaded on access
-@page("/", "app.jl.html")
+@page("/", "views/app.jl.html")
+@page("/gcsim", "views/gcsim.jl.html")
+@page("/about", "views/about.jl.html")
 end
