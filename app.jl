@@ -237,4 +237,6 @@ end
 # == Pages ==
 # register a new route and the page that will be loaded on access
 @page("/", "app.jl.html")
+@page("/gcsim", "gcsim.jl.html")
+@page("/about", "about.jl.html")
 end
