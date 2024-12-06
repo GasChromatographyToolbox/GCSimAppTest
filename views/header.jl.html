@@ -1,6 +1,15 @@
-<header class="main-header">
+<header class="header-wrapper">
     <div class="header-content">
-        <h1 class="title">GasChromatographyToolbox</h1>
+        <h1 class="title">
+            <script>
+                document.write(
+                    window.location.pathname === '/' ? 'GasChromatographyToolbox' :
+                    window.location.pathname === '/gcsim' ? 'GC Simulation' :
+                    window.location.pathname === '/about' ? 'GasChromatographyToolbox' :
+                    'GasChromatographyToolbox'
+                );
+            </script>
+        </h1>
         <nav class="main-nav">
             <a href="/" class="nav-item">Home</a>
             <a href="/gcsim" class="nav-item">GC Simulation</a>
