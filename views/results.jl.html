@@ -17,7 +17,10 @@
                                 x: chromatogram.t,
                                 y: chromatogram.y,
                                 type: 'scatter',
-                                mode: 'lines'
+                                mode: 'lines'//,
+                                //text: labels, // Array of labels for tooltips
+                                //hoverinfo: 'text',  // Show text on hover
+                                //marker: { size: 8 }  // Adjust marker size if needed
                             }]"
                             :layout="{
                                 xaxis: {
@@ -33,7 +36,36 @@
                                     r: 10,  // right margin
                                     t: 10,  // top margin
                                     b: 30   // bottom margin
-                                }
+                                },
+                                annotations: simulation_results && simulation_results.data ? 
+                                simulation_results.data.map((peak, index) => {
+                                    // Find the index of the closest time point
+                                    const timeIndex = chromatogram.t.findIndex(t => Math.abs(t - peak.tR) < 0.01);
+                                    // Get a window of y-values around this point
+                                    const windowStart = Math.max(0, timeIndex - 5);
+                                    const windowEnd = Math.min(chromatogram.y.length, timeIndex + 5);
+                                    const yValues = chromatogram.y.slice(windowStart, windowEnd);
+                                    // Find the maximum y-value in this window
+                                    const maxY = Math.max(...yValues);
+                                    // Alternate arrow length
+                                    const arrowLength = index % 2 === 0 ? -10 : -30;
+
+                                    return {
+                                        x: peak.tR,
+                                        y: maxY, //peak.height,
+                                        text: (index + 1).toString(),  // Label with peak number
+                                        showarrow: true,
+                                        arrowhead: 3,
+                                        ax: 0,
+                                        ay: arrowLength,  // Alternate arrow lengthdown
+                                        yanchor: 'bottom',
+                                        arrowwidth: 1,  // Adjust line width (0.5 to 3 are common values)
+                                        arrowcolor: '#000',  // Arrow color (can use any color code)
+                                        font: {
+                                            size: 12
+                                        }
+                                    };
+                                }) : []
                             }"
                             style="width: 100%; height: 100%;"
                         />
@@ -45,13 +77,22 @@
                     <div class="scrollbar" style="height: calc(85% - 40px);">
                         <q-table
                             :data="simulation_results.data"
-                            :columns="simulation_results.columns"
+                            :columns="[
+                                {
+                                    name: 'index',
+                                    label: '#',
+                                    field: row => simulation_results.data.indexOf(row) + 1,
+                                    align: 'right',
+                                    sortable: false
+                                },
+                                ...simulation_results.columns
+                            ]"
                             row-key="name"
                             class="sticky-header-table"
                             flat
                             bordered
                             virtual-scroll
-                            v-model:pagination="pagination"
+                            v-model:pagination="simulation_results.pagination"
                             :rows-per-page-options="[0]"  
                             style="max-height: 100%;"
                             hide-bottom
