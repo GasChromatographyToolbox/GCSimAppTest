@@ -1,3 +1,6 @@
+:root {
+    --path-length: 1750; /* Length of the chromatogram path */
+}
 /*========================================
     General
 ======================================== */
@@ -124,7 +127,7 @@
 /*========================================
     Header
 ======================================== */
-.main-header {
+.header-wrapper {
     background-color: #04203b;
     padding: 0.5rem 1rem;  /* Reduced padding */
     height: 60px;         /* Fixed height for header */
@@ -167,6 +170,350 @@
 .nav-item.active {
     background-color: rgba(255, 255, 255, 0.2);
 }
+
+/*========================================
+    Chromatogram animation
+======================================== */
+
+.chromatogram-container {
+    margin: 1rem;
+    background: var(--st-dashboard-bg-0);
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+.chromatogram {
+    width: 100%;
+    height: 200px;
+    /*border: 1px solid #ddd;*/
+}
+
+.chromatogram-line {
+    stroke-dasharray: var(--path-length);
+    stroke-dashoffset: var(--path-length);
+    animation: drawSequential 80s linear infinite; /* 4 colors × 20s each */
+}
+
+@keyframes drawSequential {
+    /* First drawing - Navy */
+    0% {
+        stroke: #04203b;
+        stroke-dashoffset: var(--path-length);
+    }
+    25% {
+        stroke: #04203b;
+        stroke-dashoffset: 0;
+    }
+    
+    /* Second drawing - Blue */
+    25.1% {
+        stroke: #007bff;
+        stroke-dashoffset: var(--path-length);
+    }
+    50% {
+        stroke: #007bff;
+        stroke-dashoffset: 0;
+    }
+    
+    /* Third drawing - Green */
+    50.1% {
+        stroke: #28a745;
+        stroke-dashoffset: var(--path-length);
+    }
+    75% {
+        stroke: #28a745;
+        stroke-dashoffset: 0;
+    }
+    
+    /* Fourth drawing - Red */
+    75.1% {
+        stroke: #dc3545;
+        stroke-dashoffset: var(--path-length);
+    }
+    100% {
+        stroke: #dc3545;
+        stroke-dashoffset: 0;
+    }
+}
+
+#app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    /*overflow-y: auto; /* Single scrollbar at the app level */
+}
+
+/*========================================
+    Main content & About (Text content pages
+======================================== */
+.content-wrapper {
+    flex: 1;
+    /*overflow-y: auto;*/
+    /*padding-bottom: 60px; /* Adjust based on your footer height */
+    /*position: relative;*/
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.main-content {
+    /*padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;*/
+    width: 100%;
+    max-width: 100%;
+    padding-bottom: 0;
+}
+
+/*.intro-section,
+.tool-section,
+.contact-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}*/
+
+/*.tool-content {
+    margin-top: 1rem;
+}*/
+
+/*.lead-text {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: #2c3e50;
+    margin: 1rem 0;
+}*/
+
+/* Links styling */
+.tool-section a,
+.intro-section a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.tool-section a:hover,
+.intro-section a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* Section headings */
+.section-heading {
+    color: #04203b;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #04203b;
+}
+
+/* Chromatogram container adjustments */
+.chromatogram-container {
+    background: #f8f9fa;
+    padding: 0.8rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+h2.section-heading {
+    font-size: 2rem;
+}
+
+h3.section-heading {
+    font-size: 1.5rem;
+    border-bottom-width: 1px;
+}
+
+.lead-text {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: #2c3e50;
+    margin-bottom: 2rem;
+}
+
+.card-section-primary, /* for main/intro content */
+.card-section-secondary, /* for additional content */
+.card-section-accent, /* for call-to-action/contact content */
+.publications-section {
+    font-size: 16px;
+    line-height: 1.6;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+/*.personal-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.personal-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}*/
+
+.publications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.publication-item {
+    padding: 1rem;
+    border-left: 4px solid #04203b;
+    background-color: #f8f9fa;
+    transition: transform 0.2s ease;
+}
+
+.publication-item:hover {
+    transform: translateX(5px);
+}
+
+.publication-text {
+    margin: 0;
+    line-height: 1.6;
+}
+
+/*.doi-link {
+    display: inline-block;
+    color: #0066cc;
+    text-decoration: none;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.doi-link:hover {
+    text-decoration: underline;
+}*/
+
+/* Base link styles */
+.main-content a {
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+/* External links (with icon) */
+.main-content a[target="_blank"] {
+    color: #007bff;
+    padding-right: 1.2em;
+    position: relative;
+}
+
+.main-content a[target="_blank"]::after {
+    content: "↗";  /* Unicode external link symbol */
+    position: absolute;
+    right: 0;
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+.main-content a[target="_blank"]:hover {
+    color: #0056b3;
+}
+
+/* Internal links */
+.main-content a:not([target="_blank"]) {
+    color: #04203b;
+    border-bottom: 1px solid currentColor;
+}
+
+.main-content a:not([target="_blank"]):hover {
+    color: #007bff;
+}
+
+/* Email links */
+.main-content a[href^="mailto:"] {
+    color: #28a745;
+    padding-right: 1.2em;
+    position: relative;
+}
+
+.main-content a[href^="mailto:"]::after {
+    content: "✉";  /* Unicode email symbol */
+    position: absolute;
+    right: 0;
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+.main-content a[href^="mailto:"]:hover {
+    color: #218838;
+}
+
+/* DOI links in publications */
+.publications-list a[target="_blank"] {
+    font-size: 0.9em;
+    color: #6c757d;
+    display: block;
+    margin-top: 0.3em;
+}
+
+.publications-list a[target="_blank"]:hover {
+    color: #007bff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 1rem;
+    }
+    
+    .card-section-primary, 
+    .card-section-secondary, 
+    .card-section-accent, 
+    .publications-section {
+        padding: 1.5rem;
+    }
+}
+
+/*========================================
+    Footer
+======================================== */
+
+.footer-wrapper {
+    flex-shrink: 0;
+    padding: 1rem 0;
+    width: 100%;
+    background-color: var(--st-dashboard-bg-0);
+}
+
+._genie_logo {
+    background: url('https://genieframework.com/logos/genie/logo-simple-with-padding.svg') no-repeat;
+    background-size: 40px;
+    padding-top: 22px;
+    padding-right: 10px;
+    color: transparent;
+    font-size: 9pt;
+}
+
+/* Special handling for footer when inside GC Simulation page */
+.gcsim-page .footer-wrapper {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    background-color: transparent;
+}
+
+/*========================================
+    About
+======================================== */
+
+
+
+
+
+
+
+
 
 /* ========================================
     Custom Media Queries
