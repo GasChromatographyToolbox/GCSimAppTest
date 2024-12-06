@@ -33,7 +33,6 @@ title_module() = [
 
 # Reactive code
 @app begin
-
     # Load the retention database
     retention_database = DataFrame(CSV.File("public/data/Database.csv", header=1, silencewarnings=true, stringtype=String))
     substance_names = GasChromatographySimulator.all_solutes("Wax", retention_database)
@@ -63,6 +62,7 @@ title_module() = [
     @in refresh_ui = false
 
     # result of the simulation
+    # default data for the default input variables is loaded from the public/data folder
     data_table_options = DataTableOptions(
         columns = [
         Column("name", label="Name", align=:left, sortable=false),
@@ -79,29 +79,24 @@ title_module() = [
         descending = false
     )
     @out simulation_results = DataTable(
-        DataFrame(
-            name = String[], 
-            tR = Float64[], 
-            τR = Float64[],
-            Telu = Float64[],
-            Res = Float64[]
-        ),
+        DataFrame(CSV.File("public/data/simulation_results.csv", header=1, silencewarnings=true)),
+        #DataFrame(
+        #    name = String[],
+        #    tR = Float64[],
+        #    τR = Float64[],
+        #    Telu = Float64[],
+        #    Res = Float64[],
+        #    height = Float64[]
+        #),
         data_table_options,
         pagination
     )
 
-    @out chromatogram = DataFrame(
-        t = Float64[],
-        y = Float64[]
-    )
-    #@out chromatogram_layout = PlotlyBase.Layout(
-    #    title = "Chromatogram-test",
-    #    xaxis = attr(title = "Time (min)"),
-    #    yaxis = attr(showticklabels = false)
-    #)
+    @out chromatogram = DataFrame(CSV.File("public/data/chromatogram.csv", header=1, silencewarnings=true))
 
     # misc variables
     @out title = "GasChromatographyToolbox"
+    @out chromatogram_path = read("public/data/chromatogram-path-animation.txt", String)
 
     # == REACTIVE HANDLERS ==
     # reactive handlers watch a variable and execute a block of code when its value changes
@@ -151,13 +146,18 @@ title_module() = [
         simulation_results = DataTable(results_df, data_table_options, pagination)
         @push simulation_results
 
+        # save the simulation results to a file
+        CSV.write("public/data/simulation_results.csv", results_df)
+
         #Update the chromatogram data 
         chromatogram = chrom_df
         @push chromatogram
 
+        # save the chromatogram to a file
+        #CSV.write("public/data/chromatogram.csv", chrom_df)
+
         # Log the final state
         @info "simulation_results updated:" simulation_results
-        @info "simulation_data updated:" simulation_data
         @info "chromatogram updated:" chromatogram
     end
 end
@@ -233,14 +233,17 @@ function GC_simulation(column_length,
     @info "Converted parameters:" parameters
     # Run the simulation 
     sim = GasChromatographySimulator.simulate(parameters)[1]
+    height = GasChromatographySimulator.chromatogram(sim.tR./60.0, sim.tR./60.0, sim.τR./60.0)
     simulation_results = DataFrame(
         name = sim.Name, 
         tR = replace(round.(sim.tR./60.0, digits=3), NaN => "--"), 
         τR = replace(round.(sim.τR, digits=2), NaN => "--"),
         Telu = replace(round.(sim.TR, digits=2), NaN => "--"),
-        Res = replace(round.(sim.Res, digits=3), NaN => "--")
+        Res = replace(round.(sim.Res, digits=3), NaN => "--"),
+        height = replace(round.(height, digits=3), NaN => "--")
         # NaN values seem to cause issues with the DataTable/Vue.js
     )
+    @info "Simulation results:" simulation_results
 
     # chromatogram
     tEnd = sum(time_steps)/60.0
@@ -254,9 +257,11 @@ function GC_simulation(column_length,
     return simulation_results, chromatogram 
 end
 
+
+
 # == Pages ==
 # register a new route and the page that will be loaded on access
-@page("/", "views/app.jl.html")
-@page("/gcsim", "views/gcsim.jl.html")
-@page("/about", "views/about.jl.html")
+@page("/", "views/index.jl.html", layout = "layouts/base_layout.html")
+@page("/gcsim", "views/gcsim.jl.html", layout = "layouts/base_layout.html")
+@page("/about", "views/about.jl.html", layout = "layouts/base_layout.html")
 end
