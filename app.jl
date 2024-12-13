@@ -264,4 +264,6 @@ end
 @page("/", "views/index.jl.html", layout = "layouts/base_layout.html")
 @page("/gcsim", "views/gcsim.jl.html", layout = "layouts/base_layout.html")
 @page("/about", "views/about.jl.html", layout = "layouts/base_layout.html")
+@page("/legal/privacy_notice", "views/legal/privacy_notice.html", layout = "layouts/base_layout.html")
+@page("/legal/legal_notice", "views/legal/legal_notice.html", layout = "layouts/base_layout.html")
 end

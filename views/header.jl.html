@@ -2,11 +2,12 @@
     <div class="header-content">
         <h1 class="title">
             <script>
+                const APP_NAME = 'GasChromatographyToolbox'; 
                 document.write(
-                    window.location.pathname === '/' ? 'GasChromatographyToolbox' :
+                    window.location.pathname === '/' ? APP_NAME :
                     window.location.pathname === '/gcsim' ? 'GC Simulation' :
-                    window.location.pathname === '/about' ? 'GasChromatographyToolbox' :
-                    'GasChromatographyToolbox'
+                    window.location.pathname === '/about' ? APP_NAME :
+                    APP_NAME
                 );
             </script>
         </h1>
