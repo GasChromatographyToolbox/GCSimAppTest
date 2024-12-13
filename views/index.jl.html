@@ -24,81 +24,81 @@
                     Its purpose is to use simulation results to develop new methods for the analysis of
                     a wide range of separation problems. The toolbox consists of a set of open-source Julia packages.
                 </p>
-            </div>
 
-            <!-- GC Simulator Section -->
-            <div class="card-section-secondary">
-                <h2 class="section-heading">GasChromatographySimulator.jl</h2>
-                <div class="tool-content">
-                    <p>
-                        The package
-                        <a href="https://github.com/GasChromatographyToolbox/GasChromatographySimulator.jl" target="_blank">
-                            GasChromatographySimulator.jl
-                        </a>
-                        is the basic package for the simulation of a gas chromatographic separations.
-                    </p>
-                    <p>
-                        A demo version for the separation of 17 substances on three different stationary_phase
-                        phases in a one-dimensional GC is available under the tab 
-                        <a href="/gcsim">GC Simulation</a>. The column length, diameter and the film thickness can be varied,
-                        as well as the flow and type of the carrier gas and the temperature program. The resulting
-                        chromatogram and the peak list will be shown in the results section.
-                    </p>
+                <!-- GC Simulator Section -->
+                <div class="card-section-secondary">
+                    <h2 class="section-heading">GasChromatographySimulator.jl</h2>
+                    <div class="tool-content">
+                        <p>
+                            The package
+                            <a href="https://github.com/GasChromatographyToolbox/GasChromatographySimulator.jl" target="_blank">
+                                GasChromatographySimulator.jl
+                            </a>
+                            is the basic package for the simulation of a gas chromatographic separations.
+                        </p>
+                        <p>
+                            A demo version for the separation of 17 substances on three different stationary_phase
+                            phases in a one-dimensional GC is available under the tab 
+                            <a href="/gcsim">GC Simulation</a>. The column length, diameter and the film thickness can be varied,
+                            as well as the flow and type of the carrier gas and the temperature program. The resulting
+                            chromatogram and the peak list will be shown in the results section.
+                        </p>
+                    </div>
                 </div>
-            </div>
 
-            <!-- GC Systems Section -->
-            <div class="card-section-secondary">
-                <h2 class="section-heading">GasChromatographySystems.jl</h2>
-                <div class="tool-content">
-                    <p>
-                        Complex systems of multiple separation columns, like in comprehensive 
-                        multidimensional GCxGC, can be simulated with the package
-                        <a href="https://github.com/GasChromatographyToolbox/GasChromatographySystems.jl" target="_blank">
-                            GasChromatographySystems.jl
-                        </a>.
-                        It uses the GasChromatographySimulator.jl package for the simulation of the individual columns.
-                    </p>
-                    <p>
-                        Beside the simulation of the separation, it includes also a flow calculator for complex
-                        networks of capillaries. Depending on inlet and outlet pressures the flow through different
-                        parts of the network can be calculated, as well as the pressure drop.
-                    </p>
-                    <p>
-                        A demo version of the simulation of a GCxGC system and the flow calculator will be available soon.
-                    </p>
+                <!-- GC Systems Section -->
+                <div class="card-section-secondary">
+                    <h2 class="section-heading">GasChromatographySystems.jl</h2>
+                    <div class="tool-content">
+                        <p>
+                            Complex systems of multiple separation columns, like in comprehensive 
+                            multidimensional GCxGC, can be simulated with the package
+                            <a href="https://github.com/GasChromatographyToolbox/GasChromatographySystems.jl" target="_blank">
+                                GasChromatographySystems.jl
+                            </a>.
+                            It uses the GasChromatographySimulator.jl package for the simulation of the individual columns.
+                        </p>
+                        <p>
+                            Beside the simulation of the separation, it includes also a flow calculator for complex
+                            networks of capillaries. Depending on inlet and outlet pressures the flow through different
+                            parts of the network can be calculated, as well as the pressure drop.
+                        </p>
+                        <p>
+                            A demo version of the simulation of a GCxGC system and the flow calculator will be available soon.
+                        </p>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Retention Parameter Estimator Section -->
-            <div class="card-section-secondary">
-                <h2 class="section-heading">RetentionParameterEstimator.jl</h2>
-                <div class="tool-content">
-                    <p>
-                        For the correct simulation of GC separations the retention parameters which describe the 
-                        interaction of the different substances with the stationary phase are needed. These parameters
-                        can be calculated from the retention times of the substances in isothermal measurements. The package
-                        <a href="https://github.com/GasChromatographyToolbox/RetentionParameterEstimator.jl" target="_blank">
-                            RetentionParameterEstimator.jl
-                        </a>
-                        can be used for this task. It uses the GasChromatographySimulator.jl package to estimate the parameters
-                        from measured temperature programmed GC runs by finding the optimal set of retention parameters that lead to similar simulated 
-                        and measured retention times.
-                    </p>
-                    <p>
-                        A demo version for the estimation of the retention parameters will be available soon.
-                    </p>
+                <!-- Retention Parameter Estimator Section -->
+                <div class="card-section-secondary">
+                    <h2 class="section-heading">RetentionParameterEstimator.jl</h2>
+                    <div class="tool-content">
+                        <p>
+                            For the correct simulation of GC separations the retention parameters which describe the 
+                            interaction of the different substances with the stationary phase are needed. These parameters
+                            can be calculated from the retention times of the substances in isothermal measurements. The package
+                            <a href="https://github.com/GasChromatographyToolbox/RetentionParameterEstimator.jl" target="_blank">
+                                RetentionParameterEstimator.jl
+                            </a>
+                            can be used for this task. It uses the GasChromatographySimulator.jl package to estimate the parameters
+                            from measured temperature programmed GC runs by finding the optimal set of retention parameters that lead to similar simulated 
+                            and measured retention times.
+                        </p>
+                        <p>
+                            A demo version for the estimation of the retention parameters will be available soon.
+                        </p>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Contact Section -->
-            <div class="card-section-accent">
-                <h2 class="section-heading">Contact</h2>
-                <p>
-                    If you have interest in a more advanced use of the GasChromatographyToolbox or
-                    have any questions, please contact us:
-                    <a href="mailto:info@gaschromatographytoolbox.org">info@gaschromatographytoolbox.org</a>
-                </p>    
+                <!-- Contact Section -->
+                <div class="card-section-accent">
+                    <h2 class="section-heading">Contact</h2>
+                    <p>
+                        If you have interest in a more advanced use of the GasChromatographyToolbox or
+                        have any questions, please contact us:
+                        <a href="mailto:info@gaschromatographytoolbox.org">info@gaschromatographytoolbox.org</a>
+                    </p>    
+                </div>
             </div>
         </div>
     </div>
