@@ -2,7 +2,7 @@
 
 julia_version = "1.10.4"
 manifest_format = "2.0"
-project_hash = "9aff3b4cdeed23308fa7a9dd44c76c4bbf35264c"
+project_hash = "f0c3f1f03252c582234f3f84dd0efd30b8f79da6"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "72af59f5b8f09faee36b4ec48e014a79210f2f4f"
@@ -830,6 +830,18 @@ deps = ["Distributed", "Genie", "Logging", "Revise"]
 git-tree-sha1 = "fa1355104c5f89ff3023ba5112613a4c489ff444"
 uuid = "c6228e60-a24f-11e9-1776-c313472ebacc"
 version = "2.2.4"
+
+[[deps.GenieDeploy]]
+deps = ["Genie"]
+git-tree-sha1 = "26e8c6c7850a28699715c4c553fc61a73a452cb1"
+uuid = "d108a3e0-159a-438b-bbd8-7bf1a8b5a5d1"
+version = "1.0.1"
+
+[[deps.GenieDeployDocker]]
+deps = ["Genie", "GenieDeploy"]
+git-tree-sha1 = "0626516bbbf43599093ee21cf9ea8e510e57fb41"
+uuid = "a082159f-dd50-4f6d-a3c5-00c38fd36577"
+version = "1.0.1"
 
 [[deps.GenieDevTools]]
 deps = ["Dates", "Genie", "RemoteREPL", "Revise", "Stipple", "StippleUI", "Tables"]
