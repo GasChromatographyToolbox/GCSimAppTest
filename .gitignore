@@ -34,3 +34,6 @@ Overview_functions_and_tests.xlsx
 
 # log folder
 log/
+
+# build folder
+build/
