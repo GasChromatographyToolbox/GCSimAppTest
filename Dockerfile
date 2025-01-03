@@ -1,4 +1,4 @@
-FROM julia:latest
+FROM julia:1.10.4
 RUN apt-get update && apt-get install -y vim
 RUN useradd --create-home --shell /bin/bash genie
 RUN mkdir /home/genie/app
@@ -18,6 +18,7 @@ ENV PORT="8000"
 ENV WSPORT="8000"
 ENV EARLYBIND="true"
 ENV JULIA_CPU_TARGET="generic;sandybridge,-xsaveopt,clone_all;haswell,-rdrnd,base(1)"
+#ENV JULIA_DEBUG="all"
 
 RUN julia -e 'using Pkg; \
     Pkg.activate("."); \
