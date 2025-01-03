@@ -33,11 +33,11 @@ title_module() = [
 
 # Reactive code
 @app begin
-    # Load the retention database
+    # Load the retention database   
     retention_database = DataFrame(CSV.File("public/data/Database.csv", header=1, silencewarnings=true, stringtype=String))
     substance_names = GasChromatographySimulator.all_solutes("Wax", retention_database)
     phases = unique(retention_database.Phase)
-
+    
 # == REACTIVE VARIABLES ==
     # @out variables can only be modified by the backend
     # @in variables can be modified by both the backend and the browser
@@ -138,27 +138,36 @@ title_module() = [
     end
 
     @onbutton run_simulation begin
+        #println(stderr, "=== BUTTON CLICKED ===")
+        #@info "Button clicked, running simulation"
+        #@info "Input parameters:" column_length column_diameter film_thickness stationary_phase gas flow_rate outlet_pressure temperature_plateaus temperature_hold_times heating_rates
         @info "Running simulation"
 
-        results_df, chrom_df = GC_simulation(column_length, column_diameter, film_thickness, stationary_phase, gas, flow_rate, outlet_pressure, temperature_plateaus, temperature_hold_times, heating_rates, retention_database, substance_names)
+        try
+            results_df, chrom_df = GC_simulation(column_length, column_diameter, film_thickness, stationary_phase, gas, flow_rate, outlet_pressure, temperature_plateaus, temperature_hold_times, heating_rates, retention_database, substance_names)
+            
+            println(stderr, "=== SIMULATION COMPLETED ===")
+            @info "Results:" first(results_df, 3)  # Show first 3 rows
+            # Update the DataTables data property
+            simulation_results = DataTable(results_df, data_table_options, pagination)
+            @push simulation_results
 
-        # Update the DataTables data property
-        simulation_results = DataTable(results_df, data_table_options, pagination)
-        @push simulation_results
+            # save the simulation results to a file
+            #CSV.write("public/data/simulation_results.csv", results_df)
 
-        # save the simulation results to a file
-        CSV.write("public/data/simulation_results.csv", results_df)
+            #Update the chromatogram data 
+            chromatogram = chrom_df
+            @push chromatogram
 
-        #Update the chromatogram data 
-        chromatogram = chrom_df
-        @push chromatogram
+            # Log the final state
+            @info "simulation_results updated:" simulation_results
+            @info "chromatogram updated:" chromatogram
 
-        # save the chromatogram to a file
-        #CSV.write("public/data/chromatogram.csv", chrom_df)
-
-        # Log the final state
-        @info "simulation_results updated:" simulation_results
-        @info "chromatogram updated:" chromatogram
+        catch e
+            println(stderr, "=== SIMULATION ERROR ===")
+            @error "Simulation failed" exception=(e, catch_backtrace())
+        end
+        
     end
 end
 
@@ -219,7 +228,6 @@ function GC_simulation(column_length,
     #    GasChromatographySimulator.Substance("sub2", "0-0-2", 273.15+50.0, 33.0, 100.0, 1e-3, "test", 1e-8, 0.0, 0.0),
     #    GasChromatographySimulator.Substance("sub3", "0-0-3", 273.15+60.0, 27.0, 90.0, 1e-3, "test", 1e-8, 0.0, 0.0)
     #]
-
     substances = GasChromatographySimulator.load_solute_database(database, column.sp, column.gas, substance_names, zeros(length(substance_names)), zeros(length(substance_names)))
     @info "Substances:" substances
 
