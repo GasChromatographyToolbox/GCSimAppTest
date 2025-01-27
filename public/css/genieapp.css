@@ -509,6 +509,17 @@ h3.section-heading {
     color:#8d99ae;
     margin: 0;
 }
+
+.footer__version {
+    font-size: 0.8rem;
+    color: #6c757d;  /* matches text-muted */
+    margin: 0.5rem 0;
+    text-align: center;
+}
+
+.footer__version p {
+    margin: 0;  /* removes default paragraph margin */
+}
 /*========================================
     Legal
 ======================================== */
