@@ -1,11 +1,12 @@
 # Set environment before loading Genie
-ENV["GENIE_ENV"] = "prod" #"prod"
+ENV["GENIE_ENV"] = "dev" #"prod"
 
 using Genie, Logging
+include("../../src/utils.jl")
 
 # App-wide constants
 const APP_NAME = "GasChromatographyToolbox"
-const VERSION = "0.1.0"
+const VERSION = get_version()
 
 # Base configuration that's the same across all environments
 Genie.Configuration.config!(
