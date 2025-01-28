@@ -1,5 +1,5 @@
 # Set environment before loading Genie
-ENV["GENIE_ENV"] = "dev" #"prod"
+ENV["GENIE_ENV"] = "prod" #"prod"
 
 using Genie, Logging
 include("../../src/utils.jl")
