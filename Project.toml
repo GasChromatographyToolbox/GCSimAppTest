@@ -1,9 +1,7 @@
-name = "GCSimAppTest"
-uuid = "bbf224f7-c788-4c90-bde3-ae3edf6dbe6d"
-authors = ["Jan Leppert <jan@janleppert.de>"]
 version = "0.1.3"
 
 [deps]
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 GasChromatographySimulator = "dd82b6e2-56ef-419d-b271-0be268cb65f5"
 Genie = "c43c736e-a2d1-11e8-161f-af95117fbd1e"
